@@ -31,6 +31,12 @@ install_packages() {
   fi
 }
 
+enable_flathub() {
+  warning "Activation de Flathub..."
+  flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  message "Flathub activé"
+}
+
 disable_tty1() {
   warning "Désactivation du tty1..."
   systemctl disable getty@tty1
