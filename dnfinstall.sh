@@ -1,10 +1,15 @@
 #!/bin/bash
-#!/bin/bash -e
 
 # Messages en couleur
 error() { echo -e "\033[0;31m====> $*\033[0m"; }
 message() { echo -e "\033[0;32m====> $*\033[0m"; }
 warning() { echo -e "\033[0;33m====> $*\033[0m"; }
+
+# Vérification de l'OS :
+if ! command -v dnf >/dev/null; then
+  error "Ce script nécessite dnf (Fedora)"
+  exit 1
+fi
 
 # Vérification du paramètre
 if [[ -z "$1" ]]; then
