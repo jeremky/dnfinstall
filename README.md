@@ -6,6 +6,8 @@ Script automatisant l'installation et le paramétrage de Fedora.
 
 - `install_packages` : met à jour le système et installe les applications présentes dans le fichier `config/<mode>/packages.cfg`
 
+- `enable_flathub` : ajoute le dépôt flathub (flatpak est préinstallé sur Fedora Workstation)
+
 - `disable_tty1` : désactive le tty1 si c'est pour une utilisation uniquement par SSH
 
 - `disable_sudopasswd` : désactive la demande du mot de passe pour les commandes sudo. **A NE PAS UTILISER EN PROD !**
@@ -32,15 +34,12 @@ Commentez les fonctions que vous ne voulez pas utiliser. Exemple avec le mode `d
 
 install_packages
 
-enable_locate
+enable_flathub
 
 # disable_tty1
-# disable_sudofile
 # disable_sudopasswd
 
-# configure_fail2ban
 # configure_sshd
-
 ```
 
 Avec le fichier de config se trouve un fichier contenant la liste des paquets à installer si `install_packages` est actif.
@@ -75,5 +74,5 @@ zoxide
 Une fois le fichier `config/<mode>/config.cfg` modifié, lancez le script avec les droits root :
 
 ```bash
-sudo ./aptinstall.sh <mode>
+sudo ./dnfinstall.sh <mode>
 ```
