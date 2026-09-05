@@ -4,7 +4,7 @@ Script automatisant l'installation et le paramétrage de Fedora.
 
 ## Fonctionnalités
 
-- `install_packages` : met à jour le système et installe les applications présentes dans le fichier `config/<mode>/packages.cfg`
+- `install_packages` : met à jour le système et installe les applications présentes dans le fichier `config/packages.cfg`
 
 - `enable_flathub` : ajoute le dépôt flathub (flatpak est préinstallé sur Fedora Workstation)
 
@@ -26,40 +26,42 @@ Script automatisant l'installation et le paramétrage de Fedora.
 
 ## Configuration
 
-Un fichier de configuration sous `config/<mode>/config.cfg` permet de paramétrer l'exécution du script selon vos préférences.
-Commentez les fonctions que vous ne voulez pas utiliser. Exemple avec le mode `desktop` :
+Le fichier `config/config.cfg` permet de paramétrer l'exécution du script selon vos préférences.
+Commentez les fonctions que vous ne voulez pas utiliser. Exemple :
 
 ```txt
-# dnfinstall desktop config
+# dnfinstall config
 
 install_packages
-
 enable_flathub
 
 # disable_tty1
 # disable_sudopasswd
-
 # configure_sshd
 ```
 
-Avec le fichier de config se trouve un fichier contenant la liste des paquets à installer si `install_packages` est actif.
+Avec le fichier de config se trouve `config/packages.cfg`, contenant la liste des paquets à installer si `install_packages` est actif.
 
-Exemple avec le fichier `config/desktop/packages.cfg` :
+Exemple :
 
 ```txt
-# dnfinstall desktop list
+# dnfinstall packages list
 
 colordiff
 curl
 duf
+du-dust
 fd-find
 jetbrains-mono-nl-fonts
 fzf
 gnome-extensions-app
+gnome-shell-extension-appindicator
+gnome-shell-extension-dash-to-dock
 gnome-tweaks
 htop
 ncdu
 papirus-icon-theme
+procs
 ripgrep
 rsync
 tree
@@ -71,8 +73,8 @@ zoxide
 
 ## Utilisation
 
-Une fois le fichier `config/<mode>/config.cfg` modifié, lancez le script avec les droits root :
+Une fois le fichier `config/config.cfg` modifié, lancez le script avec les droits root :
 
 ```bash
-sudo ./dnfinstall.sh <mode>
+sudo ./dnfinstall.sh
 ```

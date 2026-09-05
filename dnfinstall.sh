@@ -11,12 +11,6 @@ if ! command -v dnf >/dev/null; then
   exit 1
 fi
 
-# Vérification du paramètre
-if [[ -z "$1" ]]; then
-  error "Usage : $(basename "$0") <profil>"
-  exit 1
-fi
-
 # Vérification des droits root
 if [[ "$EUID" -ne 0 ]]; then
   error "Droits root nécessaires"
@@ -78,11 +72,7 @@ configure_sshd() {
 }
 
 # Exécution
-dir="$(dirname "$0")/config/$1"
-if [[ ! -d "$dir" ]]; then
-  error "Profil $1 non trouvé"
-  exit 1
-fi
+dir="$(dirname "$0")/config"
 cfg="$dir/config.cfg"
 list="$dir/packages.cfg"
 if [[ ! -f "$cfg" ]] || [[ ! -f "$list" ]]; then
