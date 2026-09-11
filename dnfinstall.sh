@@ -19,14 +19,15 @@ fi
 
 # Fonctions
 install_packages() {
-  warning "Mise à jour des paquets..."
+  warning "Mise à jour des paquets"
   dnf -y upgrade || { error "Problème lors de la mise à jour des paquets"; }
   if [[ -f "$list" ]]; then
-    warning "Installation des paquets..."
+    warning "Installation des paquets"
     grep -v -e '#' -e '^$' "$list" | xargs dnf -y install || {
       error "Problème lors de l'installation des paquets"
     }
     message "Installation des paquets terminée"
+    echo
   fi
 }
 
@@ -36,6 +37,7 @@ enable_flathub() {
     error "Problème lors de l'activation de Flathub"
   }
   message "Flathub activé"
+  echo
 }
 
 disable_tty1() {
@@ -44,6 +46,7 @@ disable_tty1() {
     error "Problème lors de la désactivation du tty1"
   }
   message "tty1 désactivé"
+  echo
 }
 
 disable_sudopasswd() {
@@ -55,20 +58,36 @@ disable_sudopasswd() {
     error "Problème lors de la configuration des permissions sudo"
   }
   message "Mot de passe sudo désactivé"
+  echo
 }
 
 configure_sshd() {
-  if [[ -d /etc/ssh/sshd_config.d ]]; then
-    warning "Sécurisation de SSH..."
-    user=$(id -un 1000)
-    echo -e "# Secure Config\nX11Forwarding no\nAllowUsers $user\nHostKey /etc/ssh/ssh_host_ed25519_key\nPasswordAuthentication yes\nKbdInteractiveAuthentication yes\nMaxAuthTries 3\nClientAliveInterval 300\nClientAliveCountMax 2\nKexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org\nMACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com\nCiphers aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-gcm@openssh.com,aes128-ctr" >"/etc/ssh/sshd_config.d/$user.conf" || {
-      error "Problème lors de la configuration de SSH"
-    }
-    systemctl restart sshd || {
-      error "Problème lors du redémarrage de SSH"
-    }
-    message "SSH sécurisé. Modifiez le fichier /etc/ssh/sshd_config.d/$user.conf pour désactiver la connexion par mot de passe après avoir importé votre clé ed25519."
+  if [[ ! -d /etc/ssh/sshd_config.d ]]; then
+    error "SSH n'est pas installé"
+    return 1
   fi
+  warning "Sécurisation de SSH"
+  user=$(id -un 1000)
+  tee "/etc/ssh/sshd_config.d/$user.conf" <<EOF
+# Secure Config
+X11Forwarding no
+AllowUsers $user
+HostKey /etc/ssh/ssh_host_ed25519_key
+PasswordAuthentication yes
+KbdInteractiveAuthentication yes
+MaxAuthTries 3
+ClientAliveInterval 300
+ClientAliveCountMax 2
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+Ciphers aes256-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-gcm@openssh.com,aes128-ctr
+EOF
+  systemctl restart sshd || {
+    error "Problème lors du redémarrage de SSH"
+    exit 1
+  }
+  message "SSH sécurisé. Modifiez le fichier /etc/ssh/sshd_config.d/$user.conf pour désactiver la connexion par mot de passe après avoir importé votre clé ed25519"
+  echo
 }
 
 # Exécution
@@ -79,7 +98,7 @@ if [[ ! -f "$cfg" ]] || [[ ! -f "$list" ]]; then
   error "Fichier $cfg ou $list introuvable"
   exit 1
 fi
-
+echo
 while read -r line; do
   [[ -z "$line" || "$line" == \#* ]] && continue
   if declare -f "$line" >/dev/null; then
